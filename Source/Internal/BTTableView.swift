@@ -28,6 +28,7 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
     // Public properties
     var configuration: BTConfiguration!
     var selectRowAtIndexPathHandler: ((_ indexPath: Int) -> ())?
+    var deleteRowAtIndexPathHandler: ((_ indexPath: Int) -> ())?
     
     // Private properties
     var items: [String] = []
@@ -55,9 +56,18 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if let hitView = super.hitTest(point, with: event) , hitView.isKind(of: BTTableCellContentView.self) {
-            return hitView
+//        print("entered hitTest")
+        if let hitView = super.hitTest(point, with: event) {
+            let hitViewType = String(describing: type(of: hitView))
+//            print("hitViewType \(hitViewType)")
+            let isSwipeButton = (hitViewType ==  "UISwipeActionStandardButton") || (hitViewType ==  "_UITableViewCellActionButton")
+//            print("isSwipeButton \(String(describing: isSwipeButton))")
+            if hitView.isKind(of: BTTableCellContentView.self)  || isSwipeButton {
+//                print("hitTest returning hitView")
+                return hitView
+            }
         }
+//        print("hitTest returning nil")
         return nil;
     }
     
@@ -73,6 +83,39 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return self.configuration.cellHeight
     }
+    
+    
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        
+        return true
+    }
+    
+
+    public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        
+        return .delete
+    }
+
+
+
+//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//        print("triggered!")
+//
+//        let more = UITableViewRowAction(style: .destructive, title: "Delete") { action, indexPath in
+//            print("more button tapped")
+//        }
+//
+//        return [more]
+//    }
+    
+    
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+    {
+        print("editingStyle")
+        self.deleteRowAtIndexPathHandler!((indexPath as NSIndexPath).row)
+//        deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+    }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = BTTableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "Cell", configuration: self.configuration)

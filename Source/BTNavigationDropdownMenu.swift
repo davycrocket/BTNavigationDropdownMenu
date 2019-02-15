@@ -221,6 +221,9 @@ open class BTNavigationDropdownMenu: UIView {
     }
 
     open var didSelectItemAtIndexHandler: ((_ indexPath: Int) -> ())?
+    
+    open var didDeleteItemAtIndexHandler: ((_ indexPath: Int) -> ())?
+    
     open var isShown: Bool!
 
     fileprivate weak var navigationController: UINavigationController?
@@ -355,6 +358,20 @@ open class BTNavigationDropdownMenu: UIView {
             self?.layoutSubviews()
         }
 
+        self.tableView.deleteRowAtIndexPathHandler = { [weak self] (indexPath: Int) -> () in
+            guard let selfie = self else {
+                return
+            }
+            selfie.didDeleteItemAtIndexHandler!(indexPath)
+            selfie.tableView.items.remove(at: indexPath)
+            selfie.tableView.deleteRows(at: [IndexPath(row: indexPath, section: 0)], with: UITableView.RowAnimation.automatic)
+//            if selfie.shouldChangeTitleText! {
+//                selfie.setMenuTitle("\(selfie.tableView.items[indexPath])")
+//            }
+//            self?.hideMenu()
+//            self?.layoutSubviews()
+        }
+
         // Add background view & table view to container view
         self.menuWrapper.addSubview(self.backgroundView)
         self.menuWrapper.addSubview(self.tableView)
@@ -429,6 +446,26 @@ open class BTNavigationDropdownMenu: UIView {
         self.cellTextLabelColor = self.navigationController?.navigationBar.titleTextAttributes?[NSAttributedString.Key.foregroundColor] as? UIColor
 
         self.arrowTintColor = self.configuration.arrowTintColor
+    }    
+    
+    @available(iOS 8.0, *)
+    public func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteButton = UITableViewRowAction(style: .default, title: "Delete") {
+            
+            action, indexPath in
+            
+//            if self.services.dataService.isStorageCapacityLow() {
+//                ShowLowStorageAlert(self)
+//                return
+//            }
+            
+//            let uuid = try! self.services.dataService.getUUID(at: indexPath.row)
+//            try! self.services.dataService.removePurchase(uuid)
+//            tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
+        }
+        
+        return [deleteButton]
     }
 
     func showMenu() {
