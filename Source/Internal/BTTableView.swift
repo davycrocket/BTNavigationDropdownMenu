@@ -111,7 +111,6 @@ class BTTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
     {
-        print("editingStyle")
         self.deleteRowAtIndexPathHandler!((indexPath as NSIndexPath).row)
 //        deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
     }

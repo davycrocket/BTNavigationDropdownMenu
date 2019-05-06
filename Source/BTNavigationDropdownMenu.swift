@@ -362,9 +362,10 @@ open class BTNavigationDropdownMenu: UIView {
             guard let selfie = self else {
                 return
             }
-            selfie.didDeleteItemAtIndexHandler!(indexPath)
+            
             selfie.tableView.items.remove(at: indexPath)
             selfie.tableView.deleteRows(at: [IndexPath(row: indexPath, section: 0)], with: UITableView.RowAnimation.automatic)
+            selfie.didDeleteItemAtIndexHandler!(indexPath)
 //            if selfie.shouldChangeTitleText! {
 //                selfie.setMenuTitle("\(selfie.tableView.items[indexPath])")
 //            }
